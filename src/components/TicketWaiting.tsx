@@ -1,6 +1,6 @@
 import { random } from "lodash-es";
 import { useEffect, useState } from "react";
-import { Alert, Box, Button, Progress, Text, Title } from "@mantine/core"
+import { Alert, Anchor, Box, Button, Progress, Text, Title } from "@mantine/core"
 
 
 const TicketWaiting = ({
@@ -21,7 +21,14 @@ const TicketWaiting = ({
       </Title>
 
       <Text size="xl" mb="lg">
-        There are a few people waiting in line to buy tickets for the Eras tour.
+        There are a few people waiting in line to buy tickets for the
+        {" "}
+        <Anchor
+          target="_blank"
+          href="https://www.taylorswift.com/tour-us/">
+          Eras tour
+        </Anchor>
+        .
         Keep this page open so that you don't lose your seat.
       </Text>
 
