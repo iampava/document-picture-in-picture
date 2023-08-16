@@ -71,7 +71,7 @@ function App() {
 
     if (
       pipWindowRef.current === null ||
-      progressContainerRef.current === null || 
+      progressContainerRef.current === null ||
       contentForPiPRef.current === null
     ) {
       return;
