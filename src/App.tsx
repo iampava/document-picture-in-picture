@@ -9,6 +9,7 @@ function App() {
   // true/false means we know if the feature is/is not supported
   const [isFeatureSupported, setIsFeatureSupported] = useState<boolean | undefined>(undefined);
 
+  const finishButtonId = "finish-button";
   const [isPiP, setIsPiP] = useState(false);
   const appRef = useRef<HTMLDivElement>(null);
   const contentForPiPRef = useRef<HTMLDivElement>(null);
@@ -92,10 +93,14 @@ function App() {
     const pipWindow = pipWindowRef.current;
     const progressContainer = progressContainerRef.current;
     const contentForPiP = contentForPiPRef.current;
+    const finishButtonFromPiP = pipWindow.document.querySelector(`#${finishButtonId}`);
 
     pipWindow.addEventListener("pagehide", onPageHide);
+    finishButtonFromPiP?.addEventListener("click", onBuyTicketFromPiP);
+
     return () => {
       pipWindow.removeEventListener("pagehide", onPageHide);
+      finishButtonFromPiP?.removeEventListener("click", onBuyTicketFromPiP);
     }
 
     // NOTE: using `any` because we don't yet have TS definitions for this
@@ -104,7 +109,17 @@ function App() {
       progressContainer.append(contentForPiP);
       setIsPiP(false);
     }
+
+    function onBuyTicketFromPiP() {
+      setDidBuyTicket(true);
+    }
   }, [isPiP])
+
+  useEffect(() => {
+    if (didBuyTicket === true) {
+      closePiP();
+    }
+  }, [didBuyTicket]);
 
   return (
     <div ref={appRef} className="flex flex-col h-full">
@@ -138,6 +153,7 @@ function App() {
                 <Box bg="dark" className="h-full" p="md" ref={contentForPiPRef}>
                   <TicketWaiting
                     className="mb-16"
+                    finishButtonId={finishButtonId}
                     initialValue={initalValue}
                     peopleBeforeYou={peopleBeforeYou}
                     onBuyTicket={() => {

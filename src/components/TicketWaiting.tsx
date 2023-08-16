@@ -7,11 +7,18 @@ const TicketWaiting = ({
   peopleBeforeYou,
   initialValue,
   className,
-  onBuyTicket
+  onBuyTicket,
+
+  // ID of the button that will be clicked when is the user's turn.
+  // We need an ID because via normal React events this doesn't work if
+  // the button is in a Picture-in-Picture mode. Thus, we attach an ID
+  // and use the vanilla approach!
+  finishButtonId
 }: {
   onBuyTicket: () => void;
   peopleBeforeYou: number;
   initialValue: number;
+  finishButtonId: string;
   className?: string;
 }) => {
   return (
@@ -58,7 +65,7 @@ const TicketWaiting = ({
           You're next in line! Let's get your ticket!
 
           <div className="mt-2">
-            <Button variant="outline" color="dark" onClick={onBuyTicket}> Get ticket</Button>
+            <Button id={finishButtonId} variant="outline" color="dark" onClick={onBuyTicket}> Get ticket</Button>
           </div>
         </Alert>
       </div>
