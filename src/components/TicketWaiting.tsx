@@ -32,7 +32,16 @@ const TicketWaiting = ({
         Keep this page open so that you don't lose your seat.
       </Text>
 
-      {peopleBeforeYou > 0 ? (
+      {/*
+        You might wonder why we hide the elements using CSS,
+        instead of using conditional rendering. Well, initially
+        I was conditionally rendering but because Mantine.dev is
+        using Styled Components that are added in the page only when
+        a certain component is used, the success Alert at the bottom
+        was not correctly styled. So, just for demo purposes I decided
+        to use CSS to hide the elements.
+      */}
+      <div className={peopleBeforeYou > 0 ? "block" : "hidden"}>
         <Progress
           size="lg"
           color="pink"
@@ -43,15 +52,16 @@ const TicketWaiting = ({
           label={peopleBeforeYou.toString()}
           value={100 - (peopleBeforeYou / initialValue) * 100}
         />
-      ) : (
+      </div>
+      <div className={peopleBeforeYou > 0 ? "hidden" : "block"}>
         <Alert color="green" title="Congrats!">
           You're next in line! Let's get your ticket!
 
           <div className="mt-2">
-          <Button variant="outline" color="dark" onClick={onBuyTicket}> Get ticket</Button>
+            <Button variant="outline" color="dark" onClick={onBuyTicket}> Get ticket</Button>
           </div>
         </Alert>
-      )}
+      </div>
     </Box>
   )
 }
