@@ -155,8 +155,8 @@ function App() {
                   </Button>
                 </Box>
               ) : (
-                <Box>
-                  <Text>
+                <Box className="text-white">
+                  <Text mb="md">
                     Progress bar is open in Picture-in-Picture mode
                   </Text>
 
