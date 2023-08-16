@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { IconExternalLink, IconX } from '@tabler/icons-react';
 import { SuccessConfetti } from './components/SuccessConfetti';
-import { Alert, Anchor, Box, Button, Text } from '@mantine/core';
+import { Alert, Anchor, Box, Button, Code, Text } from '@mantine/core';
 import { TicketWaiting, useWaitlistStatus } from './components/TicketWaiting';
 
 function App() {
+  // undefined means we don't know yet
+  // true/false means we know if the feature is/is not supported
+  const [isFeatureSupported, setIsFeatureSupported] = useState<boolean | undefined>(undefined);
+
   const [isPiP, setIsPiP] = useState(false);
   const appRef = useRef<HTMLDivElement>(null);
   const contentForPiPRef = useRef<HTMLDivElement>(null);
@@ -65,6 +69,14 @@ function App() {
   }
 
   useEffect(() => {
+    if ('documentPictureInPicture' in window) {
+      setIsFeatureSupported(true);
+    } else {
+      setIsFeatureSupported(false);
+    }
+  }, [])
+
+  useEffect(() => {
     if (!isPiP) {
       return;
     }
@@ -118,48 +130,61 @@ function App() {
           Thus, this demo might fail to work in the future, if the API changes significantly.
         </div>
       </Alert>
-      <Box id="parent" bg="dark" className="flex-1" p="md">
-        {!didBuyTicket ? (
-          <div>
-            <div ref={progressContainerRef}>
-              <Box bg="dark" className="h-full" p="md" ref={contentForPiPRef}>
-                <TicketWaiting
-                  className="mb-16"
-                  initialValue={initalValue}
-                  peopleBeforeYou={peopleBeforeYou}
-                  onBuyTicket={() => {
-                    setDidBuyTicket(true);
-                  }}
-                />
-              </Box>
+      {isFeatureSupported ? (
+        <Box id="parent" bg="dark" className="flex-1" p="md">
+          {!didBuyTicket ? (
+            <div>
+              <div ref={progressContainerRef}>
+                <Box bg="dark" className="h-full" p="md" ref={contentForPiPRef}>
+                  <TicketWaiting
+                    className="mb-16"
+                    initialValue={initalValue}
+                    peopleBeforeYou={peopleBeforeYou}
+                    onBuyTicket={() => {
+                      setDidBuyTicket(true);
+                    }}
+                  />
+                </Box>
+              </div>
+              {!isPiP ? (
+                <Box p="md">
+                  <Button onClick={openPiP} variant="filled" color="pink" leftIcon={(
+                    <IconExternalLink size="0.8rem" />
+                  )}>
+                    Use Picture-in-Picture
+                  </Button>
+                </Box>
+              ) : (
+                <Box>
+                  <Text>
+                    Progress bar is open in Picture-in-Picture mode
+                  </Text>
+
+                  <Button onClick={closePiP} variant="filled" color="pink" leftIcon={(
+                    <IconX size="0.8rem" />
+                  )}>
+                    Close Picture-in-Picture
+                  </Button>
+                </Box>
+              )}
             </div>
-            {!isPiP ? (
-              <Box p="md">
-                <Button onClick={openPiP} variant="filled" color="pink" leftIcon={(
-                  <IconExternalLink size="0.8rem" />
-                )}>
-                  Use Picture-in-Picture
-                </Button>
-              </Box>
-            ) : (
-              <Box>
-                <Text>
-                  Progress bar is open in Picture-in-Picture mode
-                </Text>
+          ) : (
+            <SuccessConfetti />
+          )}
 
-                <Button onClick={closePiP} variant="filled" color="pink" leftIcon={(
-                  <IconX size="0.8rem" />
-                )}>
-                  Close Picture-in-Picture
-                </Button>
-              </Box>
-            )}
+        </Box>
+      ) : (
+        <Alert mt="lg" color="red" title="Feature not supported">
+          <div>
+            This feature is not supported in your browser.
           </div>
-        ) : (
-          <SuccessConfetti />
-        )}
+          <div>
+            I tested it in Chrome 116. If you're using Chrome 116+ and still see this message
+            make sure to enable this flag: <Code>chrome://flags/#document-picture-in-picture-api</Code>
+          </div>
+        </Alert>
+      )}
 
-      </Box>
     </div>
   )
 }
