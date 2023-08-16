@@ -105,11 +105,13 @@ function App() {
             href="https://developer.chrome.com/docs/web-platform/document-picture-in-picture/"
           >
             Document Picture-in-Picture feature
-          </Anchor>. Check out the GitHub repo with the full source-code
+          </Anchor>. Check out the
           {" "}
           <Anchor target="_blank" href="https://github.com/iampava/document-picture-in-picture">
-            here
-          </Anchor>.
+            GitHub repo
+          </Anchor>
+          {" "}
+          for the full source-code.
         </div>
         <div className="text-base">
           This API is not standard and is only available in Chrome 116+.
@@ -139,7 +141,7 @@ function App() {
                   Use Picture-in-Picture
                 </Button>
               </Box>
-            ): (
+            ) : (
               <Box>
                 <Text>
                   Progress bar is open in Picture-in-Picture mode
