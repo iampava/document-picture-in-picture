@@ -10,11 +10,16 @@ function App() {
   const [isFeatureSupported, setIsFeatureSupported] = useState<boolean | undefined>(undefined);
 
   const finishButtonId = "finish-button";
-  const [isPiP, setIsPiP] = useState(false);
-  const appRef = useRef<HTMLDivElement>(null);
+  const [isPiPEnabled, setIsPiPEnabled] = useState(false);
+
+  // This is the DOM element we'll `.append` into the PiP window
   const contentForPiPRef = useRef<HTMLDivElement>(null);
+
+  // This is the parent/container of the DOM element we'll `.append` into the PiP window
+  // We'll append the element back here when PiP is closed
+  const contentForPiPParentRef = useRef<HTMLDivElement>(null);
+
   const [didBuyTicket, setDidBuyTicket] = useState(false);
-  const progressContainerRef = useRef<HTMLDivElement>(null);
   const { peopleBeforeYou, initalValue } = useWaitlistStatus()
 
   // NOTE: using `any` because we don't yet have TS definitions for this
@@ -36,6 +41,7 @@ function App() {
       height: 200
     });
 
+    // >>> START: copy styled
     // Copy style sheets over from the initial document so that the UI looks the same.
     // This part is copy-pasted from
     // https://developer.chrome.com/docs/web-platform/document-picture-in-picture/#copy-style-sheets-to-the-picture-in-picture-window
@@ -58,9 +64,10 @@ function App() {
         pipWindowRef.current.document.head.appendChild(link);
       }
     });
+    // <<< END: copy styled
 
     pipWindowRef.current.document.body.append(contentForPiP);
-    setIsPiP(true);
+    setIsPiPEnabled(true);
   }
 
   const closePiP = () => {
@@ -78,20 +85,20 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!isPiP) {
+    if (!isPiPEnabled) {
       return;
     }
 
     if (
       pipWindowRef.current === null ||
-      progressContainerRef.current === null ||
+      contentForPiPParentRef.current === null ||
       contentForPiPRef.current === null
     ) {
       return;
     }
 
     const pipWindow = pipWindowRef.current;
-    const progressContainer = progressContainerRef.current;
+    const progressContainer = contentForPiPParentRef.current;
     const contentForPiP = contentForPiPRef.current;
     const finishButtonFromPiP = pipWindow.document.querySelector(`#${finishButtonId}`);
 
@@ -107,13 +114,13 @@ function App() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function onPageHide() {
       progressContainer.append(contentForPiP);
-      setIsPiP(false);
+      setIsPiPEnabled(false);
     }
 
     function onBuyTicketFromPiP() {
       setDidBuyTicket(true);
     }
-  }, [isPiP])
+  }, [isPiPEnabled])
 
   useEffect(() => {
     if (didBuyTicket === true) {
@@ -122,7 +129,7 @@ function App() {
   }, [didBuyTicket]);
 
   return (
-    <div ref={appRef} className="flex flex-col h-full">
+    <div className="flex flex-col h-full">
       <Alert title="NOTE">
         <div className="text-base mb-2">
           This is a demo showcasing the
@@ -149,7 +156,7 @@ function App() {
         <Box id="parent" bg="dark" className="flex-1" p="md">
           {!didBuyTicket ? (
             <div>
-              <div ref={progressContainerRef}>
+              <div ref={contentForPiPParentRef}>
                 <Box bg="dark" className="h-full" p="md" ref={contentForPiPRef}>
                   <TicketWaiting
                     className="mb-16"
@@ -162,7 +169,7 @@ function App() {
                   />
                 </Box>
               </div>
-              {!isPiP ? (
+              {!isPiPEnabled ? (
                 <Box p="md">
                   <Button onClick={openPiP} variant="filled" color="pink" leftIcon={(
                     <IconExternalLink size="0.8rem" />
