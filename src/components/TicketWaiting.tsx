@@ -77,7 +77,7 @@ function useWaitlistStatus() {
   const [initalValue] = useState(random(1000, 2000));
   const [peopleBeforeYou, setPeopleBeforeYou] = useState(initalValue);
 
-  const stepMargins = [Math.round(initalValue * 0.02), Math.round(initalValue * 0.04)];
+  const stepMargins = [Math.round(initalValue * 0.05), Math.round(initalValue * 0.09)];
 
   useEffect(() => {
     if (peopleBeforeYou === 0) {
